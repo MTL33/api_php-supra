@@ -1,26 +1,26 @@
 <?php
 include 'config.php';
 include 'headers.php';
-require "verif_auth.php";
+require "verif_auth.php"; // Vérification authentification et la validation du token 
 
 //recup de produit(s)
 if ($_SERVER['REQUEST_METHOD'] == 'GET') :
     //1 produit dont on a l'id
     if( isset($_GET['id_produits'])) :
-        //requête avec jointure. on renomme les champs ambigus avec 'AS'
+        //requête avec jointure. on renomme les champs ambigus avec 'AS' && Utiliser une vue est possbile à la place de la longue requête.
         $sql = sprintf("SELECT produits.label, produits.prix, produits.id, categories.label AS label_cat, categories.id AS id_categories FROM produits LEFT JOIN categories ON categories.id = produits.id_categories WHERE produits.id = %d",
             $_GET['id_produits']
         );
-        $response['response'] = 'One product with id '.$_GET['id_produits'];
+        $response['response'] = 'One product with id '.$_GET['id_produits']; // résponse que je retroune à Insomnia pour un produit 
     else :
         //tous les produits
         $sql = "SELECT produits.label, produits.prix, produits.id, categories.label AS label_cat, categories.id AS id_categories FROM produits LEFT JOIN categories ON categories.id = produits.id_categories ORDER BY produits.label ASC";
         $response['response'] = 'All products';
     endif;
 
-    $result = $connect->query($sql);
+    $result = $connect->query($sql); // Result est le passage entre mysql et php
     echo $connect->error;
-
+    // On récupère les enregitrements sous forme de tabelau associatif
     $response['data'] = $result->fetch_all(MYSQLI_ASSOC);
     $response['nb_hits'] = $result->num_rows;
 endif; //end GET
